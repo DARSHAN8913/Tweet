@@ -7,6 +7,8 @@ from .serializers import UserSerializer, UserCreateSerializer
 
 User = get_user_model()
 
+
+
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

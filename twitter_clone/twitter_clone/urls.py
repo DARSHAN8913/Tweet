@@ -24,8 +24,9 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name="home" ),
-    path('api/', include('tweets.urls')),
-    path('api/', include('users.urls')),
+    path('register/', views.register_page, name='register_url'),
+    path('api/tweets', include('tweets.urls'),name='tweets_url'),
+    path('api/users', include('users.urls'),name='users_url'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
 
