@@ -1,0 +1,3 @@
+Tenv\Scripts\activate
+
+py twitter_clone\manage.py runserver

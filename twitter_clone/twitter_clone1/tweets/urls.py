@@ -4,7 +4,6 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'tweets', views.TweetViewSet, basename='tweet')
-# router.register(r'tweets', views.feed, basename='tweet')
 
 urlpatterns = [
     path('', include(router.urls)),
