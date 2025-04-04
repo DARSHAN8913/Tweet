@@ -19,15 +19,18 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
+from django.contrib.auth.urls import views as auth_views
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.home,name="home" ),
+    path('t/',views.home,name="home" ),
     path('register/', views.register_page, name='register_url'),
-    path('api/tweets', include('tweets.urls'),name='tweets_url'),
-    path('api/users', include('users.urls'),name='users_url'),
+    path('api/', include('tweets.urls'),name='tweets_url'),
+    path('api/', include('users.urls'),name='users_url'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('accounts/',include('django.contrib.auth.urls') ),
+
 ]
 
 if settings.DEBUG:
