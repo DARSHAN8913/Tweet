@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import login,logout
+from django.contrib.auth import login
 
 def home(request):
     return render(request, 'homee.html')  # Ensure 'home.html' exists in templates

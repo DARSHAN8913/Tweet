@@ -64,9 +64,13 @@
                       {% comment %} <li class="nav-item">
                             <a class="nav-link" href="{% url 'profile' username=user.username %}">Profile</a>
                         </li>  {% endcomment %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout">Logout</a>
-                        </li>
+                        <form id="logout-form" method="POST" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn btn-link text-white border-0" style="display: inline; cursor: pointer;">
+                                Logout
+                            </button>
+                        </form>
+                        
                 
                     {% else %}
                      <li class="nav-item">
