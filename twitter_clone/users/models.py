@@ -11,7 +11,7 @@ class User(AbstractUser):
     website = models.URLField(blank=True)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     joined_date = models.DateTimeField(auto_now_add=True)
-    followers = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    # followers = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     
     def __str__(self):
         return self.username
