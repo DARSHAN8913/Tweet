@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name="home" ),
     path('register/', views.register_page, name='register_url'),
+    path('profile/<str:username>/', views.profile_view, name='profile_url'),
     path('api/', include('tweets.urls'),name='tweets_url'),
     path('api/', include('users.urls'),name='users_url'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),

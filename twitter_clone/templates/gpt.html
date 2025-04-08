@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X Clone - Home</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">X</div>
+      <nav class="menu">
+        <a href="#" class="menu-item">Home</a>
+        <a href="#" class="menu-item">Explore</a>
+        <a href="#" class="menu-item">Notifications</a>
+        <a href="#" class="menu-item">Messages</a>
+        <a href="#" class="menu-item">Bookmarks</a>
+        <a href="#" class="menu-item">Profile</a>
+        <button class="post-button">Post</button>
+      </nav>
+    </aside>
+
+    <!-- Feed -->
+    <main class="feed">
+      <header class="feed-header">
+        <h2>Home</h2>
+      </header>
+
+      <section class="new-post">
+        <img src="assets/images/profile.jpg" alt="User" class="avatar" />
+        <textarea placeholder="What is happening?!" rows="3"></textarea>
+        <div class="actions">
+          <button class="post-button">Post</button>
+        </div>
+      </section>
+
+      <section class="post">
+        <img src="assets/images/profile.jpg" alt="User" class="avatar" />
+        <div class="post-content">
+          <div class="post-header">
+            <strong>John Doe</strong> <span>@johndoe · 2h</span>
+          </div>
+          <p>Just finished building a Twitter clone with pure HTML & CSS. 😎</p>
+          <div class="post-actions">
+            <span>💬 10</span>
+            <span>🔁 4</span>
+            <span>❤️ 20</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Trends Sidebar -->
+    <aside class="trends">
+      <div class="trends-box">
+        <h3>Trends for you</h3>
+        <div class="trend-item">
+          <span>#HTML</span>
+          <small>12.3K posts</small>
+        </div>
+        <div class="trend-item">
+          <span>#CSS</span>
+          <small>9.7K posts</small>
+        </div>
+        <div class="trend-item">
+          <span>#FrontendDev</span>
+          <small>5.1K posts</small>
+        </div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

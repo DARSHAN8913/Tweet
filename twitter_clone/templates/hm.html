@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Twitter Clone{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <!-- Tweet form UI (handled via JS only) -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="tweet-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <textarea class="form-control" id="tweet-content" rows="3" placeholder="What's happening?" maxlength="280" required></textarea>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small id="char-count">280 characters remaining</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tweet-image" class="form-label">Add Image (optional)</label>
+                        <input type="file" class="form-control" id="tweet-image" accept="image/*">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-tweet">Tweet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Feed Container -->
+    <div id="feed-container">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading tweets...</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tweetForm = document.getElementById('tweet-form');
+        const tweetContent = document.getElementById('tweet-content');
+        const tweetImage = document.getElementById('tweet-image');
+        const charCount = document.getElementById('char-count');
+
+        tweetContent?.addEventListener('input', () => {
+            const remaining = 280 - tweetContent.value.length;
+            charCount.textContent = `${remaining} characters remaining`;
+            charCount.classList.toggle('text-danger', remaining < 20);
+        });
+
+        tweetForm?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const content = tweetContent.value.trim();
+            const imageFile = tweetImage.files[0];
+
+            if (!content && !imageFile) {
+                alert("Tweet can't be empty");
+                return;
+            }
+
+            const token = getAuthToken();
+            if (!token) {
+                alert('You need to be logged in to tweet.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('content', content);
+            if (imageFile) formData.append('image', imageFile);
+
+            fetch('/api/tweets/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${token}`
+                },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(() => {
+                    tweetContent.value = '';
+                    tweetImage.value = '';
+                    charCount.textContent = '280 characters remaining';
+                    loadFeed();
+                })
+                .catch(() => alert('Tweet failed to post. Try again.'));
+        });
+
+        function loadFeed() {
+            const feedContainer = document.getElementById('feed-container');
+
+            fetch('/api/tweets/')
+                .then(res => res.json())
+                .then(tweets => {
+                    feedContainer.innerHTML = '';
+                    if (!tweets.length) {
+                        feedContainer.innerHTML = `
+                            <div class="text-center py-5">
+                                <p class="text-muted">No tweets yet. Start the conversation!</p>
+                            </div>`;
+                        return;
+                    }
+
+                    tweets.forEach(tweet => {
+                        const tweetEl = document.createElement('div');
+                        tweetEl.className = 'card tweet-card mb-3';
+                        const createdAt = new Date(tweet.created_at).toLocaleString();
+
+                        tweetEl.innerHTML = `
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex">
+                                        <img src="${tweet.author_profile_image || '/static/img/default-profile.png'}" class="profile-image me-3">
+                                        <div>
+                                            <h5 class="card-title mb-1">
+                                                <a href="/profile/${tweet.author_username}" class="text-decoration-none">
+                                                    ${tweet.author_username}
+                                                </a>
+                                            </h5>
+                                            <p class="card-text">${tweet.content}</p>
+                                            ${tweet.image_url ? `<img src="${tweet.image_url}" class="img-fluid rounded mt-2">` : ''}
+                                            <small class="text-muted">${createdAt}</small>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                                            <li><a class="dropdown-item" href="#">Share</a></li>
+                                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        feedContainer.appendChild(tweetEl);
+                    });
+                })
+                .catch(() => {
+                    feedContainer.innerHTML = '<p class="text-danger text-center mt-4">Failed to load tweets.</p>';
+                });
+        }
+
+        loadFeed();
+    });
+</script>
+{% endblock %}

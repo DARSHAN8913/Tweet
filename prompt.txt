@@ -1,3 +1,75 @@
+here's the login.html:{% extends 'base.html' %}
+
+{% block title %}Login | Twitter Clone{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-6">
+        <div class="card shadow-lg border-0 rounded">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">Welcome Back</h4>
+            </div>
+            <div class="card-body p-4">
+                <form id="login-form" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control rounded-pill" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control rounded-pill" id="password" name="password" required>
+                    </div>
+                    <div class="alert alert-danger d-none" id="login-error"></div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">
+                        Login
+                    </button>
+                </form>
+                <hr>
+                <p class="text-center">Don't have an account? <a href="{% url 'register_url' %}" class="text-primary">Register</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            loginError.classList.add('d-none');
+
+            const formData = new FormData(loginForm);
+
+            fetch("{% url 'login' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Invalid username or password');
+                }
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                loginError.textContent = error.message;
+                loginError.classList.remove('d-none');
+            });
+        });
+    });
+</script>
+{% endblock %} 
+ and register.html:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,22 +157,6 @@
             })
             .then(data => {
                 console.log("Registration successful!", data);
-                return fetch('/api-token-auth/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: formData.username,
-                        password: formData.password
-                    })
-                });
-            })
-            .then(response => response.json())
-            .then(tokenData => {
-                // STEP 3: Save token
-                localStorage.setItem('authToken', tokenData.token);
-                window.location.href = '/';
                 window.location.href = '/';  // Redirect to homepage
             })
             .catch(error => {
@@ -115,3 +171,4 @@
 
 </body>
 </html>
+ just tell me where should i edit  so that when registered or logged in the auth token mechanism m
