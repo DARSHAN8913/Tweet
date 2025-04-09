@@ -3,7 +3,7 @@
 {% block title %}Home | Twitter Clone{% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
+   
         <div class="card mb-4">
             <div class="card-body">
                 <form id="tweet-form">
@@ -17,7 +17,7 @@
                 </form>
             </div>
         </div>
-    {% endif %}
+   
     
     <div id="feed-container">
         <div class="text-center py-5">
@@ -59,7 +59,7 @@
                 const content = tweetContent.value.trim();
                 if (!content) return;
                 
-                const token = getAuthToken();
+                const token = localStorage.getItem('authtoken');
                 if (!token) {
                     alert('You need to be logged in to tweet');
                     return;
@@ -218,7 +218,7 @@
         setInterval(loadFeed, 15000);
         
         // Event delegation for dynamically added like buttons and comment forms
-        document.body.addEventListener('click', function(e) {
+        document.body.addEventListener('click', function(e) {.
             // Like button handler
             if (e.target.closest('.like-btn')) {
                 const likeBtn = e.target.closest('.like-btn');
