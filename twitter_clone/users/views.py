@@ -3,9 +3,26 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.views import ObtainAuthToken
+
 from .serializers import UserSerializer, UserCreateSerializer
 
 User = get_user_model()
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'username': user.username,
+            'email': user.email,
+        })
 
 
 

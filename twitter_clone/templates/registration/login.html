@@ -10,7 +10,7 @@
                 <h4 class="mb-0">Welcome Back</h4>
             </div>
             <div class="card-body p-4">
-                <form id="login-form" method="POST" action="{% url 'login' %}">
+                <form id="login-form" >
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
@@ -35,36 +35,53 @@
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        loginForm.addEventListener('submit', function(e) {
+
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
             loginError.classList.add('d-none');
 
-            const formData = new FormData(loginForm);
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
 
-            fetch("{% url 'login' %}", {
-                method: "POST",
-                body: formData,
+            fetch('/api/users/login/', {
+                method: 'POST',
                 headers: {
-                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
+                    'Content-Type': 'application/json'
+                    //'X-CSRFToken': csrfToken 
+                },
+                body: JSON.stringify(formData)
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Invalid username or password');
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Login failed');
+                    });
                 }
-                window.location.href = '/';
+                return response.json();
+            })
+            .then(data => {
+                // ✅ Save token to localStorage
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('userId', data.user_id);
+
+                console.log('Login successful:', data);
+                window.location.href = '/'; // redirect to home or dashboard
             })
             .catch(error => {
                 console.error('Login error:', error);
-                loginError.textContent = error.message;
-                loginError.classList.remove('d-none');
+                 loginError.textContent = error.message;
+                 loginError.classList.remove('d-none');
             });
         });
     });
 </script>
+
 {% endblock %}

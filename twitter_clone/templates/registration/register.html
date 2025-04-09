@@ -85,6 +85,7 @@
             })
             .then(data => {
                 console.log("Registration successful!", data);
+                
                 return fetch('/api-token-auth/', {
                     method: 'POST',
                     headers: {
@@ -100,7 +101,6 @@
             .then(tokenData => {
                 // STEP 3: Save token
                 localStorage.setItem('authToken', tokenData.token);
-                window.location.href = '/';
                 window.location.href = '/';  // Redirect to homepage
             })
             .catch(error => {
