@@ -43,6 +43,36 @@
             width: 300px;
             height: 300px;
         }
+        .mini-profile-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #ccc;
+            background-color: #f8f8f8;
+        }
+        
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .full-name {
+            font-weight: bold;
+        }
+        
+        .username {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
         body {
             background-color: #f5f8fa;
         }
@@ -53,6 +83,24 @@
             border-radius: 12px;
             margin-bottom: 10px;
             border: 1px solid #eaeaea;
+        }
+        .horizontal-dots {
+            cursor: pointer;
+            width: 19px;
+            height: 14px;
+            background-image: radial-gradient(circle, black 1.5px, transparent 2.0px);
+            background-size: 6px 16px;
+            background-color: #EEEEEE;
+            border-top: 1px solid #CCCCCC;
+            border-right: 1px solid #CCCCCC;
+            border-bottom: 1px solid #CCCCCC;
+            border-left: 1px solid #CCCCCC;
+            border-radius: 0.2em;
+            margin-left: 14px;
+        }
+        .horizontal-dots:hover {
+           border: solid .2px #0198E1;
+           
         }
         .profile-image {
             width: 50px;
@@ -98,7 +146,7 @@
                             <a class="nav-link" href="#" id="logout-nav" style="display: none;">Logout</a>
                         </li> 
                         <li class="nav-item">
-                            <a class="nav-link" id="login-nav" href="{% url 'register_url' %}">Register</a>
+                            <a class="nav-link" id="register-nav" href="{% url 'register_url' %}">Register</a>
                         </li>
                     {% comment %} {% endif %}  {% endcomment %}
                 </ul>
@@ -121,13 +169,20 @@
                                 <a href="#" class="sidebar-btn">Profile</a>
                                 <a href="#" class="sidebar-btn">⋯ More</a>
                             </div>
+                            <div class="mini-profile-card" id="miniProfile">
+                                <img id="miniProfilePic" class="profile-pic" src="" alt="Profile Picture">
+                                <div class="profile-info">
+                                    <div id="miniFullName" class="full-name">Full Name</div>
+                                    <div id="miniUsername" class="username">@username</div>
+                                </div>
+                            </div>
 
                             <!-- Dynamic Trending Content -->
-                            <div id="trending-content" class="text-center">
+                            <!-- <div id="trending-content" class="text-center">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     {% endblock %}      
@@ -164,18 +219,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function getAuthToken() {
-            const name = 'authtoken=';
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let cookie of cookieArray) {
-                cookie = cookie.trim();
-                if (cookie.indexOf(name) === 0) {
-                    return cookie.substring(name.length, cookie.length);
+            {% comment %} function getAuthToken() {
+                const name = 'authtoken=';
+                const decodedCookie = decodeURIComponent(document.cookie);
+                const cookieArray = decodedCookie.split(';');
+                for (let cookie of cookieArray) {
+                    cookie = cookie.trim();
+                    if (cookie.indexOf(name) === 0) {
+                        return cookie.substring(name.length, cookie.length);
+                    }
                 }
-            }
-            return '';
-        }
+                return '';
+            } {% endcomment %}
 
         function loadTrending() {
             fetch('/api/trending/')
@@ -192,14 +247,14 @@
                     data.forEach(tweet => {
                         const trendDiv = document.createElement('div');
                         trendDiv.className = 'mb-2';
-                        trendDiv.innerHTML = `
-                            <a href="/tweets/${tweet.id}" class="text-decoration-none">
+                        trendDiv.innerHTML = 
+                           ` <a href="/tweets/${tweet.id}" class="text-decoration-none">
                                 <small class="text-muted">${tweet.author_username}</small>
                                 <p class="mb-1">${tweet.content.substring(0, 50)}${tweet.content.length > 50 ? '...' : ''}</p>
                                 <small class="text-muted">${tweet.like_count} likes</small>
                             </a>
-                            <hr>
-                        `;
+                            <hr>`
+                        ;
                         trendingContent.appendChild(trendDiv);
                     });
                 })
@@ -209,14 +264,44 @@
                         '<p class="text-danger">Failed to load trending tweets</p>';
                 });
         }
+        const token = localStorage.getItem('authToken');
+        function miniprofile(){
+            const username = localStorage.getItem('username'); // already stored after login
+            const userid = localStorage.getItem('userId') + '/'; // already stored after login
+
+            if (username) {
+                document.getElementById('miniUsername').textContent = '@' + username;
+            }
+            fetch('/api/users/'+ username, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch user profile');
+                return response.json();
+            })
+            .then(data => {
+                const pic = document.getElementById('miniProfilePic');
+                if (data.profile_image) {
+                    pic.src = data.profile_image;
+                } else {
+                    pic.src = '/static/img/default-profile.png'; // fallback
+                }
+            })
+            .catch(err => {
+                console.error('Error loading profile image:', err);
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadTrending();
-            const token = localStorage.getItem('authToken');
+            //loadTrending();
             const loginNav = document.getElementById('login-nav');
             const registerNav = document.getElementById('register-nav');
             const profileNav = document.getElementById('profile-nav');
             const logoutNav = document.getElementById('logout-nav');
+            const miniprof=document.getElementById('miniProfile');
 
             if (token) {
                 // Hide login/register, show profile/logout
@@ -224,8 +309,10 @@
                 if (registerNav) registerNav.style.display = 'none';
                 if (profileNav) profileNav.style.display = 'inline-block';
                 if (logoutNav) logoutNav.style.display = 'inline-block';
+                miniprofile()
             } else {
                 // User not logged in
+                if (miniprof) miniprof.style.display = 'none';
                 if (loginNav) loginNav.style.display = 'inline-block';
                 if (registerNav) registerNav.style.display = 'inline-block';
                 if (profileNav) profileNav.style.display = 'none';

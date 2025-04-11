@@ -1,24 +1,260 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Twitter Clone</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Twitter Clone{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar-btn {
+            position: relative;
+            padding: 10px 20px;
+            display: inline-block;
+            background: #f0f0f0;
+            color: #333;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 30px;
+            overflow: hidden;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            border: 1px solid transparent;
+            z-index: 0;
+        }
+        .sidebar-btn:hover {
+            color: white;
+            border-color: #1DA1F2;
+        }
+        .sidebar-btn::before {
+            content: '';
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: #1DA1F2;
+            border-radius: 50%;
+            transition: width 0.5s ease, height 0.5s ease;
+            z-index: -1;
+        }
+        .sidebar-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        body {
+            background-color: #f5f8fa;
+        }
+        .navbar {
+            background-color: #1DA1F2;
+        }
+        .tweet-card {
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #eaeaea;
+        }
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .btn-tweet {
+            background-color: #1DA1F2;
+            color: white;
+            border-radius: 30px;
+        }
+        .like-btn {
+            cursor: pointer;
+            color: #657786;
+        }
+        .like-btn.liked {
+            color: #E0245E;
+        }
+        .sidebar {
+            position: sticky;
+            top: 20px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% block c1 %}
-   <div>
-    <p>
-        hello this is base html file content
-    </p>
-   </div>
-    {% endblock %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Twitter Clone</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" id="login-nav" href="{% url 'login_url' %}">Login</a>
+                        <a class="nav-link" href="#" id="logout-nav" style="display: none;">Logout</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" id="register-nav" href="{% url 'register_url' %}">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    {% block sidebar %}
+                    <div class="card mb-4">
+                        <div class="card-header">Trends for you</div>
+                        <div class="card-body" id="trending-container">
+                            <!-- Sidebar Buttons -->
+                            <div class="d-grid gap-2 mb-3">
+                                <a href="{% url 'home' %}" class="sidebar-btn">Home</a>
+                                <a href="#" class="sidebar-btn">Profile</a>
+                                <a href="#" class="sidebar-btn">⋯ More</a>
 
-    {% block c2 %}
-<div>
-    <p>
-        hello this is BASE html file content  C2
-    </p>
-   </div>
-{% endblock %}
+                                <!-- Mini Profile Card -->
+                                <div id="mini-profile" class="card mt-3 d-none">
+                                    <div class="card-body text-center">
+                                        <img src="" id="mini-profile-pic" class="profile-image mb-2" alt="Profile Picture">
+                                        <h6 id="mini-profile-name" class="mb-0">Name</h6>
+                                        <small id="mini-profile-username" class="text-muted">@username</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Trending Content -->
+                            <div id="trending-content" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endblock %}      
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-6">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-md-3">
+                {% block right_sidebar %}
+                <div class="card">
+                    <div class="card-header">Who to follow</div>
+                    <div class="card-body">
+                        <p class="text-muted">Suggestions coming soon</p>
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">Twitter Clone - Educational Project © {% now "Y" %}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function loadTrending() {
+            fetch('/api/trending/')
+                .then(response => response.json())
+                .then(data => {
+                    const trendingContent = document.getElementById('trending-content');
+                    trendingContent.innerHTML = '';
+
+                    if (data.length === 0) {
+                        trendingContent.innerHTML = '<p class="text-muted">No trending topics yet</p>';
+                        return;
+                    }
+
+                    data.forEach(tweet => {
+                        const trendDiv = document.createElement('div');
+                        trendDiv.className = 'mb-2';
+                        trendDiv.innerHTML = `
+                            <a href="/tweets/${tweet.id}" class="text-decoration-none">
+                                <small class="text-muted">${tweet.author_username}</small>
+                                <p class="mb-1">${tweet.content.substring(0, 50)}${tweet.content.length > 50 ? '...' : ''}</p>
+                                <small class="text-muted">${tweet.like_count} likes</small>
+                            </a>
+                            <hr>
+                        `;
+                        trendingContent.appendChild(trendDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading trending:', error);
+                    document.getElementById('trending-content').innerHTML =
+                        '<p class="text-danger">Failed to load trending tweets</p>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTrending();
+
+            const token = localStorage.getItem('authToken');
+            const username = localStorage.getItem('username');
+            const name = localStorage.getItem('name');
+            const profilePic = localStorage.getItem('profilePic') || '/static/default-profile.png';
+
+            const loginNav = document.getElementById('login-nav');
+            const registerNav = document.getElementById('register-nav');
+            const logoutNav = document.getElementById('logout-nav');
+            const miniProfile = document.getElementById('mini-profile');
+
+            if (token) {
+                if (loginNav) loginNav.style.display = 'none';
+                if (registerNav) registerNav.style.display = 'none';
+                if (logoutNav) logoutNav.style.display = 'inline-block';
+
+                if (miniProfile) {
+                    document.getElementById('mini-profile-pic').src = profilePic;
+                    document.getElementById('mini-profile-name').textContent = name || 'User';
+                    document.getElementById('mini-profile-username').textContent = '@' + username;
+                    miniProfile.classList.remove('d-none');
+                }
+            } else {
+                if (loginNav) loginNav.style.display = 'inline-block';
+                if (registerNav) registerNav.style.display = 'inline-block';
+                if (logoutNav) logoutNav.style.display = 'none';
+            }
+
+            if (logoutNav) {
+                logoutNav.addEventListener('click', function () {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userId');
+                    localStorage.removeItem('name');
+                    localStorage.removeItem('profilePic');
+                    window.location.href = '/';
+                });
+            }
+
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.addEventListener('mousemove', e => {
+                    const rect = btn.getBoundingClientRect();
+                    btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                    btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                });
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

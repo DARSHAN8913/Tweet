@@ -162,6 +162,53 @@ REST_FRAMEWORK = {
     }
 }
 
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '{levelname} {asctime} {module} {message}',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '{levelname} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'verbose',
+#         },
+#         'file': {
+#             'class': 'logging.FileHandler',
+#             'filename': 'django_debug.log',  # This will be created in the root of your project
+#             'formatter': 'verbose',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',  # You can change this to INFO or ERROR if it's too noisy
+#             'propagate': True,
+#         },
+#         'django.request': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#         'django.db.backends': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',  # Shows all SQL queries!
+#         },
+#         'rest_framework': {
+#             'handlers': ['console', 'file'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     }
+# }
+
 # CORS Settings ADDITIONAL*
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only for local development
 CORS_ALLOWED_ORIGINS = [

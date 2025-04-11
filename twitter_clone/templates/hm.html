@@ -68,7 +68,7 @@
                 alert('You need to be logged in to tweet. token is: '+ token);
                 return;
             }
-
+                  
             const formData = new FormData();
             formData.append('content', content);
             if (imageFile) formData.append('image', imageFile);
@@ -127,7 +127,7 @@
                                         </div>
                                     </div>
                                     <div class="dropdown">
-                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="horizontal-dots" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots"></i>
                                         </button>
                                         <ul class="dropdown-menu">

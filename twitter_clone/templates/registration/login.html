@@ -11,7 +11,7 @@
             </div>
             <div class="card-body p-4">
                 <form id="login-form" >
-                    {% csrf_token %}
+                  
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control rounded-pill" id="username" name="username" required>
@@ -38,7 +38,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+       // const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 
         loginForm.addEventListener('submit', function (e) {
@@ -60,6 +60,7 @@
             })
             .then(response => {
                 if (!response.ok) {
+                    console.log(response)
                     return response.json().then(data => {
                         throw new Error(data.error || 'Login failed');
                     });
