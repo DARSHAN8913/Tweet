@@ -17,13 +17,14 @@ class CommentSerializer(serializers.ModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source='author.username')
     author_profile_image = serializers.ImageField(source='author.profile_image', read_only=True)
+    content_image = serializers.ImageField(source='Tweet.photo', read_only=True) # set by me
     like_count = serializers.ReadOnlyField()
     comments = CommentSerializer(many=True, read_only=True)
     is_liked = serializers.SerializerMethodField()
     
     class Meta:
         model = Tweet
-        fields = ['id', 'author', 'author_username', 'author_profile_image', 'content', 
+        fields = ['id', 'author', 'author_username', 'author_profile_image', 'content_image','content', 
                   'created_at', 'updated_at', 'like_count', 'comments', 'is_liked']
         read_only_fields = ['author', 'created_at', 'updated_at']
     

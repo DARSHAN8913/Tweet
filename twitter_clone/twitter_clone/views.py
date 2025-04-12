@@ -14,4 +14,4 @@ def login_page(request):
 def profile_view(request, username):
     # You can later query user-specific data using this username
     context = {'username': username}
-    return render(request, 'users/profile.html', context)
+    return render(request, 'profile.html', context)
